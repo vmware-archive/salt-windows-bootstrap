@@ -1,3 +1,5 @@
+# Set-ExecutionPolicy RemoteSigned
+
 cls
 Function DownloadFileWithProgress {
 
@@ -47,10 +49,41 @@ Function DownloadFileWithProgress {
 	} 
 }
 
+function Update-Environment {   
+    $locations = 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
+                 'HKCU:\Environment'
+
+    $locations | ForEach-Object {   
+        $k = Get-Item $_
+        $k.GetValueNames() | ForEach-Object {
+            $name  = $_
+            $value = $k.GetValue($_)
+            Set-Item -Path Env:\$name -Value $value
+        }
+    }
+}
+
 $strDownloadDir = "$env:Temp\DevSalt"
 New-Item $strDownloadDir -Type Directory -Force
 
-$webclient = New-Object System.Net.WebClient
+cls
+echo "Python 2.7 (entire package)"
+$url = "https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi"
+$file = "$strDownloadDir\python-2.7.9.amd64.msi"
+DownloadFileWithProgress $url $file
+echo "Installing..."
+$p = Start-Process msiexec -ArgumentList "/i $file /qb ADDLOCAL=ALL" -Wait -NoNewWindow -PassThru
+echo "Refreshing the Environment Variables..."
+
+Update-Environment
+
+cls
+echo "Microsoft Visual C++ Compiler for Python (this may take a while)"
+$url = "http://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi"
+$file = "$strDownloadDir\VCForPython27.msi"
+DownloadFileWithProgress $url $file
+echo "Installing..."
+$p = Start-Process msiexec -ArgumentList "/i $file /qb" -Wait -NoNewWindow -PassThru
 
 cls
 echo "Microsoft Visual C++ 2008 Redistributable"
@@ -77,12 +110,50 @@ echo "Installing..."
 $p = Start-Process $file -ArgumentList "/silent" -Wait -NoNewWindow -PassThru
 
 cls
-echo "Microsoft Visual C++ Compiler for Python (this may take a while)"
-$url = "http://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi"
-$file = "$strDownloadDir\VCForPython27.msi"
+echo "M2Crypto"
+$url = "http://chandlerproject.org/pub/Projects/MeTooCrypto/M2Crypto-0.21.1.win-amd64-py2.7.exe"
+$file = "$strDownloadDir\M2Crypto-0.21.1.win-amd64-py2.7.exe"
 DownloadFileWithProgress $url $file
 echo "Installing..."
-$p = Start-Process msiexec -ArgumentList "/i $file /qb" -Wait -NoNewWindow -PassThru
+$p = Start-Process $file -Wait -NoNewWindow -PassThru
+
+cls
+echo "pywin32"
+$url = "http://sourceforge.net/projects/pywin32/files/pywin32/Build%20219/pywin32-219.win-amd64-py2.7.exe"
+$file = "$strDownloadDir\pywin32-219.win-amd64-py2.7.exe"
+DownloadFileWithProgress $url $file
+echo "Installing..."
+$p = Start-Process $file -Wait -NoNewWindow -PassThru
+
+cls
+echo "pefile"
+$url = "https://pefile.googlecode.com/files/pefile-1.2.10-139.zip"
+$file = "$strDownloadDir\pefile-1.2.10-139.zip"
+DownloadFileWithProgress $url $file
+echo "Unzipping..."
+$shell = New-Object -ComObject Shell.Application
+$item = $shell.NameSpace("$file\pefile-1.2.10-139")
+$path = Split-Path (Join-Path $strDownloadDir "pefile-1.2.10-139")
+if (!(Test-Path $path)) {$null = mkdir $path}
+$shell.NameSpace($path).CopyHere($item)
+echo "Installing..."
+cd $strDownloadDir\pefile-1.2.10-139
+$p = Start-Process python -ArgumentList "setup.py install" -Wait -NoNewWindow -PassThru
+
+echo "Setting up the environment"
+$p = Start-Process pip -ArgumentList "install pycrypto" -Wait -NoNewWindow -PassThru
+$p = Start-Process pip -ArgumentList "install cython" -Wait -NoNewWindow -PassThru
+$p = Start-Process pip -ArgumentList "install jinja2" -Wait -NoNewWindow -PassThru
+$p = Start-Process pip -ArgumentList "install msgpack-python" -Wait -NoNewWindow -PassThru
+$p = Start-Process pip -ArgumentList "install psutil" -Wait -NoNewWindow -PassThru
+$p = Start-Process pip -ArgumentList "install pyyaml" -Wait -NoNewWindow -PassThru
+$p = Start-Process pip -ArgumentList "install pyzmq" -Wait -NoNewWindow -PassThru
+$p = Start-Process pip -ArgumentList "install wmi" -Wait -NoNewWindow -PassThru
+$p = Start-Process pip -ArgumentList "install requests" -Wait -NoNewWindow -PassThru
+$p = Start-Process pip -ArgumentList "install six" -Wait -NoNewWindow -PassThru
+$p = Start-Process pip -ArgumentList "install certifi" -Wait -NoNewWindow -PassThru
+$p = Start-Process pip -ArgumentList "install esky" -Wait -NoNewWindow -PassThru
+$p = Start-Process pip -ArgumentList "install bbfreeze" -Wait -NoNewWindow -PassThru
 
 cls
 echo "Git for Windows"
@@ -104,43 +175,6 @@ $file = "$strDownloadDir\Git-1.9.5-preview20141217.exe"
 DownloadFileWithProgress $url $file
 echo "Installing..."
 $p = Start-Process $file -ArgumentList '/SILENT /LOADINF="$strDownloadDir\git.inf"' -Wait -NoNewWindow -PassThru
-
-cls
-echo "Python 2.7 (entire package)"
-$url = "https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi"
-$file = "$strDownloadDir\python-2.7.9.amd64.msi"
-DownloadFileWithProgress $url $file
-echo "Installing..."
-$p = Start-Process msiexec -ArgumentList "/i $file /qb ADDLOCAL=ALL" -Wait -NoNewWindow -PassThru
-
-cls
-echo "M2Crypto"
-$url = "http://chandlerproject.org/pub/Projects/MeTooCrypto/M2Crypto-0.21.1.win-amd64-py2.7.exe"
-$file = "$strDownloadDir\M2Crypto-0.21.1.win-amd64-py2.7.exe"
-DownloadFileWithProgress $url $file
-echo "Installing..."
-$p = Start-Process $file -Wait -NoNewWindow -PassThru
-
-cls
-echo "pywin32"
-$url = "http://sourceforge.net/projects/pywin32/files/pywin32/Build%20219/pywin32-219.win-amd64-py2.7.exe"
-$file = "$strDownloadDir\pywin32-219.win-amd64-py2.7.exe"
-DownloadFileWithProgress $url $file
-echo "Installing..."
-$p = Start-Process $file -Wait -NoNewWindow -PassThru
-
-echo "Setting up the environment"
-$p = Start-Process easy_install -ArgumentList "pip" -Wait -NoNewWindow -PassThru
-$p = Start-Process pip -ArgumentList "install pycrypto" -Wait -NoNewWindow -PassThru
-$p = Start-Process pip -ArgumentList "install cython" -Wait -NoNewWindow -PassThru
-$p = Start-Process pip -ArgumentList "install jinja2" -Wait -NoNewWindow -PassThru
-$p = Start-Process pip -ArgumentList "install msgpack-python" -Wait -NoNewWindow -PassThru
-$p = Start-Process pip -ArgumentList "install psutil" -Wait -NoNewWindow -PassThru
-$p = Start-Process pip -ArgumentList "install pyyaml" -Wait -NoNewWindow -PassThru
-$p = Start-Process pip -ArgumentList "install pyzmq" -Wait -NoNewWindow -PassThru
-$p = Start-Process pip -ArgumentList "install wmi" -Wait -NoNewWindow -PassThru
-$p = Start-Process pip -ArgumentList "install requests" -Wait -NoNewWindow -PassThru
-$p = Start-Process pip -ArgumentList "install six" -Wait -NoNewWindow -PassThru
 
 echo "Cleaning up downloaded files"
 Remove-Item $strDownloadDir -Force -Recurse
