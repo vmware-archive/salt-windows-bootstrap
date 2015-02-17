@@ -1,4 +1,4 @@
-# Set-ExecutionPolicy RemoteSigned
+﻿# Set-ExecutionPolicy RemoteSigned
 
 cls
 Function DownloadFileWithProgress {
@@ -147,13 +147,13 @@ $p = Start-Process pip -ArgumentList "install jinja2" -Wait -NoNewWindow -PassTh
 $p = Start-Process pip -ArgumentList "install msgpack-python" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install psutil" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install pyyaml" -Wait -NoNewWindow -PassThru
-$p = Start-Process pip -ArgumentList "install pyzmq" -Wait -NoNewWindow -PassThru
+$p = Start-Process easy_install -ArgumentList "pyzmq" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install wmi" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install requests" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install six" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install certifi" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install esky" -Wait -NoNewWindow -PassThru
-$p = Start-Process pip -ArgumentList "install bbfreeze" -Wait -NoNewWindow -PassThru
+$p = Start-Process easy_install -ArgumentList "bbfreeze" -Wait -NoNewWindow -PassThru
 
 cls
 echo "Git for Windows"
