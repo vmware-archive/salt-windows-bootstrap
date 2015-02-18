@@ -75,6 +75,13 @@ echo "Installing..."
 $p = Start-Process msiexec -ArgumentList "/i $file /qb ADDLOCAL=ALL" -Wait -NoNewWindow -PassThru
 echo "Refreshing the Environment Variables..."
 
+Clear-Host
+$AddedLocation ="C:\Python27\Scripts"
+$Reg = "Registry::HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
+$OldPath = (Get-ItemProperty -Path "$Reg" -Name PATH).Path
+$NewPath= $OldPath + ’;’ + $AddedLocation
+Set-ItemProperty -Path "$Reg" -Name PATH –Value $NewPath
+
 Update-Environment
 
 cls
@@ -126,6 +133,14 @@ echo "Installing..."
 $p = Start-Process $file -Wait -NoNewWindow -PassThru
 
 cls
+echo "make"
+$url = "ftp://ftp.equation.com/make/64/make.exe"
+$file = "$strDownloadDir\make.exe"
+DownloadFileWithProgress $url $file
+echo "Copying to Python27 directory..."
+Copy-Item $file C:\Python27
+
+cls
 echo "pefile"
 $url = "https://pefile.googlecode.com/files/pefile-1.2.10-139.zip"
 $file = "$strDownloadDir\pefile-1.2.10-139.zip"
@@ -140,7 +155,18 @@ echo "Installing..."
 cd $strDownloadDir\pefile-1.2.10-139
 $p = Start-Process python -ArgumentList "setup.py install" -Wait -NoNewWindow -PassThru
 
+cls
+echo "easy_install"
+$url = "https://bootstrap.pypa.io/ez_setup.py"
+$file = "$strDownloadDir\ez_setup.py"
+DownloadFileWithProgress $url $file
+echo "Copying to Python27 directory..."
+Copy-Item $file C:\Python27
+
 echo "Setting up the environment"
+Set-Location -Path C:\Python27
+$p = Start-Process python -ArgumentList "ez_setup.py" -Wait -NoNewWindow -PassThru
+$p = Start-Process easy_install -ArgumentList "pip" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install pycrypto" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install cython" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install jinja2" -Wait -NoNewWindow -PassThru
@@ -155,14 +181,6 @@ $p = Start-Process pip -ArgumentList "install certifi" -Wait -NoNewWindow -PassT
 $p = Start-Process pip -ArgumentList "install esky" -Wait -NoNewWindow -PassThru
 $p = Start-Process easy_install -ArgumentList "bbfreeze" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install sphinx==1.3b2" -Wait -NoNewWindow -PassThru
-
-cls
-echo "make"
-$url = "ftp://ftp.equation.com/make/64/make.exe"
-$file = "$strDownloadDir\make.exe"
-DownloadFileWithProgress $url $file
-echo "Copying to Python27 directory..."
-Copy-Item "$strDownloadDir\make.exe" C:\Python27
 
 echo "Cleaning up downloaded files"
 Remove-Item $strDownloadDir -Force -Recurse
