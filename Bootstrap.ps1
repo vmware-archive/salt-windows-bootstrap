@@ -68,14 +68,16 @@ New-Item $strDownloadDir -Type Directory -Force
 
 cls
 echo "Python 2.7 (entire package)"
-$url = "https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi"
-$file = "$strDownloadDir\python-2.7.9.amd64.msi"
+$url = "https://www.python.org/ftp/python/2.7.8/python-2.7.8.amd64.msi"
+$file = "$strDownloadDir\python-2.7.8.amd64.msi"
 DownloadFileWithProgress $url $file
 echo "Installing..."
 $p = Start-Process msiexec -ArgumentList "/i $file /qb ADDLOCAL=ALL" -Wait -NoNewWindow -PassThru
 echo "Refreshing the Environment Variables..."
 
 Update-Environment
+
+exit
 
 cls
 echo "Microsoft Visual C++ Compiler for Python (this may take a while)"
@@ -155,6 +157,14 @@ $p = Start-Process pip -ArgumentList "install certifi" -Wait -NoNewWindow -PassT
 $p = Start-Process pip -ArgumentList "install esky" -Wait -NoNewWindow -PassThru
 $p = Start-Process easy_install -ArgumentList "bbfreeze" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install sphinx==1.3b2" -Wait -NoNewWindow -PassThru
+
+cls
+echo "make"
+$url = "ftp://ftp.equation.com/make/64/make.exe"
+$file = "$strDownloadDir\make.exe"
+DownloadFileWithProgress $url $file
+echo "Copying to Python27 directory..."
+Copy-Item "$strDownloadDir\make.exe" C:\Python27
 
 echo "Cleaning up downloaded files"
 Remove-Item $strDownloadDir -Force -Recurse
