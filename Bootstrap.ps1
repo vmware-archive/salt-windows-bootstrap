@@ -154,6 +154,7 @@ $p = Start-Process pip -ArgumentList "install six" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install certifi" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install esky" -Wait -NoNewWindow -PassThru
 $p = Start-Process easy_install -ArgumentList "bbfreeze" -Wait -NoNewWindow -PassThru
+$p = Start-Process pip -ArgumentList "install sphinx==1.3b2" -Wait -NoNewWindow -PassThru
 
 echo "Cleaning up downloaded files"
 Remove-Item $strDownloadDir -Force -Recurse
