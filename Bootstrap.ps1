@@ -155,27 +155,6 @@ $p = Start-Process pip -ArgumentList "install certifi" -Wait -NoNewWindow -PassT
 $p = Start-Process pip -ArgumentList "install esky" -Wait -NoNewWindow -PassThru
 $p = Start-Process easy_install -ArgumentList "bbfreeze" -Wait -NoNewWindow -PassThru
 
-cls
-echo "Git for Windows"
-echo "- creating inf"
-Set-Content -path $strDownloadDir\git.inf -value "[Setup]"
-Add-Content -path $strDownloadDir\git.inf -value "Lang=default"
-Add-Content -path $strDownloadDir\git.inf -value "Dir=C:\Program Files (x86)\Git"
-Add-Content -path $strDownloadDir\git.inf -value "Group=Git"
-Add-Content -path $strDownloadDir\git.inf -value "NoIcons=0"
-Add-Content -path $strDownloadDir\git.inf -value "SetupType=default"
-Add-Content -path $strDownloadDir\git.inf -value "Components=ext,ext\cheetah,assoc,assoc_sh"
-Add-Content -path $strDownloadDir\git.inf -value "Tasks="
-Add-Content -path $strDownloadDir\git.inf -value "PathOption=BashOnly"
-Add-Content -path $strDownloadDir\git.inf -value "SSHOption=OpenSSH"
-Add-Content -path $strDownloadDir\git.inf -value "CRLFOption=LFOnly"
-echo "- downloading file"
-$url = "https://github.com/msysgit/msysgit/releases/download/Git-1.9.5-preview20141217/Git-1.9.5-preview20141217.exe"
-$file = "$strDownloadDir\Git-1.9.5-preview20141217.exe"
-DownloadFileWithProgress $url $file
-echo "Installing..."
-$p = Start-Process $file -ArgumentList '/SILENT /LOADINF="$strDownloadDir\git.inf"' -Wait -NoNewWindow -PassThru
-
 echo "Cleaning up downloaded files"
 Remove-Item $strDownloadDir -Force -Recurse
 
