@@ -109,7 +109,7 @@ echo "Installing..."
 $p = Start-Process $file -ArgumentList "/q" -Wait -NoNewWindow -PassThru
 
 echo "copying library file to c:\python27"
-$file = C:\Windows\WinSxS\amd64_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.6161_none_08e61857a83bc251\msvcp90.dll
+$file = "C:\Windows\WinSxS\amd64_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.6161_none_08e61857a83bc251\msvcp90.dll"
 Copy-Item $file C:\Python27
 
 cls
@@ -178,7 +178,7 @@ $p = Start-Process pip -ArgumentList "install msgpack-python" -Wait -NoNewWindow
 $p = Start-Process pip -ArgumentList "install psutil" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install pyyaml" -Wait -NoNewWindow -PassThru
 $p = Start-Process easy_install -ArgumentList "pyzmq==13.1.0" -Wait -NoNewWindow -PassThru
-$file = C:\Python27\Lib\site-packages\zmq\libzmq.pyd
+$file = "C:\Python27\Lib\site-packages\pyzmq-13.1.0-py2.7-win-amd64.egg\zmq\libzmq.pyd"
 Copy-Item $file C:\Python27
 $p = Start-Process pip -ArgumentList "install wmi" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install requests" -Wait -NoNewWindow -PassThru
