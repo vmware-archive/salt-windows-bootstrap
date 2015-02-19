@@ -173,7 +173,7 @@ $p = Start-Process pip -ArgumentList "install jinja2" -Wait -NoNewWindow -PassTh
 $p = Start-Process pip -ArgumentList "install msgpack-python" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install psutil" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install pyyaml" -Wait -NoNewWindow -PassThru
-$p = Start-Process easy_install -ArgumentList "pyzmq" -Wait -NoNewWindow -PassThru
+$p = Start-Process easy_install -ArgumentList "pyzmq==13.1.0" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install wmi" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install requests" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install six" -Wait -NoNewWindow -PassThru
