@@ -66,40 +66,46 @@ function Update-Environment {
 $strDownloadDir = "$env:Temp\DevSalt"
 New-Item $strDownloadDir -Type Directory -Force
 
+$strWindowsRepo = "http://docs.saltstack.com/downloads/windows-deps"
+
 Clear-Host
 Write-Host "Python 2.7 (entire package)"
-$url = "https://www.python.org/ftp/python/2.7.8/python-2.7.8.amd64.msi"
-$file = "$strDownloadDir\python-2.7.8.amd64.msi"
+$file = "python-2.7.8.amd64.msi"
+$url = "$strWindowsRepo\$file"
+$file = "$strDownloadDir\$file"
 DownloadFileWithProgress $url $file
 Write-Host "Installing..."
 $p = Start-Process msiexec -ArgumentList "/i $file /qb ADDLOCAL=ALL" -Wait -NoNewWindow -PassThru
 Write-Host "Refreshing the Environment Variables..."
 
 $path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
-[System.Environment]::SetEnvironmentVariable("Path", "C:\Python27\Scripts;$path", "Machine")
+[System.Environment]::SetEnvironmentVariable("Path", "C:\Python27;C:\Python27\Scripts;$path", "Machine")
 
 Update-Environment
 
 Clear-Host
 Write-Host "Microsoft Visual C++ Compiler for Python (this may take a while)"
-$url = "http://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi"
-$file = "$strDownloadDir\VCForPython27.msi"
+$file = "VCForPython27.msi"
+$url = "$strWindowsRepo\$file"
+$file = "$strDownloadDir\$file"
 DownloadFileWithProgress $url $file
 Write-Host "Installing..."
 $p = Start-Process msiexec -ArgumentList "/i $file /qb" -Wait -NoNewWindow -PassThru
 
 Clear-Host
 Write-Host "Microsoft Visual C++ 2008 Redistributable"
-$url = "http://download.microsoft.com/download/d/2/4/d242c3fb-da5a-4542-ad66-f9661d0a8d19/vcredist_x64.exe"
-$file = "$strDownloadDir\vcredist_x64.exe"
+$file = "vcredist_x64.exe"
+$url = "$strWindowsRepo\$file"
+$file = "$strDownloadDir\$file"
 DownloadFileWithProgress $url $file
 Write-Host "Installing..."
 $p = Start-Process $file -ArgumentList "/q" -Wait -NoNewWindow -PassThru
 
 Clear-Host
 Write-Host "Microsoft Visual C++ 2008 MFC Security Update Redistributable"
-$url = "http://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe"
-$file = "$strDownloadDir\vcredist_x64.exe"
+$file = "vcredist_x64_mfc_update.exe"
+$url = "$strWindowsRepo\$file"
+$file = "$strDownloadDir\$file"
 DownloadFileWithProgress $url $file
 Write-Host "Installing..."
 $p = Start-Process $file -ArgumentList "/q" -Wait -NoNewWindow -PassThru
@@ -110,40 +116,45 @@ Copy-Item $file C:\Python27
 
 Clear-Host
 Write-Host "Open SSL for Windows (Light)"
-$url = "http://slproweb.com/download/Win64OpenSSL_Light-1_0_1L.exe"
-$file = "$strDownloadDir\Win64OpenSSL_Light-1_0_1L.exe"
+$file = "Win64OpenSSL_Light-1_0_1L.exe"
+$url = "$strWindowsRepo\$file"
+$file = "$strDownloadDir\$file"
 DownloadFileWithProgress $url $file
 Write-Host "Installing..."
 $p = Start-Process $file -ArgumentList "/silent" -Wait -NoNewWindow -PassThru
 
 Clear-Host
 Write-Host "M2Crypto"
-$url = "http://chandlerproject.org/pub/Projects/MeTooCrypto/M2Crypto-0.21.1.win-amd64-py2.7.exe"
-$file = "$strDownloadDir\M2Crypto-0.21.1.win-amd64-py2.7.exe"
+$file = "M2Crypto-0.21.1.win-amd64-py2.7.exe"
+$url = "$strWindowsRepo\$file"
+$file = "$strDownloadDir\$file"
 DownloadFileWithProgress $url $file
 Write-Host "Installing..."
 $p = Start-Process $file -Wait -NoNewWindow -PassThru
 
 Clear-Host
 Write-Host "pywin32"
-$url = "http://sourceforge.net/projects/pywin32/files/pywin32/Build%20219/pywin32-219.win-amd64-py2.7.exe"
-$file = "$strDownloadDir\pywin32-219.win-amd64-py2.7.exe"
+$file = "pywin32-219.win-amd64-py2.7.exe"
+$url = "$strWindowsRepo\$file"
+$file = "$strDownloadDir\$file"
 DownloadFileWithProgress $url $file
 Write-Host "Installing..."
 $p = Start-Process $file -Wait -NoNewWindow -PassThru
 
 Clear-Host
 Write-Host "make"
-$url = "ftp://ftp.equation.com/make/64/make.exe"
-$file = "$strDownloadDir\make.exe"
+$file = "make.exe"
+$url = "$strWindowsRepo\$file"
+$file = "$strDownloadDir\$file"
 DownloadFileWithProgress $url $file
 Write-Host "Copying to Python27 directory..."
 Copy-Item $file C:\Python27
 
 Clear-Host
 Write-Host "pefile"
-$url = "https://pefile.googlecode.com/files/pefile-1.2.10-139.zip"
-$file = "$strDownloadDir\pefile-1.2.10-139.zip"
+$file = "pefile-1.2.10-139.zip"
+$url = "$strWindowsRepo\$file"
+$file = "$strDownloadDir\$file"
 DownloadFileWithProgress $url $file
 Write-Host "Unzipping..."
 $shell = New-Object -ComObject Shell.Application
@@ -157,8 +168,9 @@ $p = Start-Process python -ArgumentList "setup.py install" -Wait -NoNewWindow -P
 
 Clear-Host
 Write-Host "easy_install"
-$url = "https://bootstrap.pypa.io/ez_setup.py"
-$file = "$strDownloadDir\ez_setup.py"
+$file = "ez_setup.py"
+$url = "$strWindowsRepo\$file"
+$file = "$strDownloadDir\$file"
 DownloadFileWithProgress $url $file
 Write-Host "Copying to Python27 directory..."
 Copy-Item $file C:\Python27
