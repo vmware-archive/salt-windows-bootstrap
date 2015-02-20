@@ -75,12 +75,6 @@ Write-Host "Installing..."
 $p = Start-Process msiexec -ArgumentList "/i $file /qb ADDLOCAL=ALL" -Wait -NoNewWindow -PassThru
 Write-Host "Refreshing the Environment Variables..."
 
-# $AddedLocation ="C:\Python27;C:\Python27\Scripts"
-# $Reg = "Registry::HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
-# $OldPath = (Get-ItemProperty -Path "$Reg" -Name PATH).Path
-# $NewPath= $OldPath + ’;’ + $AddedLocation
-# Set-ItemProperty -Path "$Reg" -Name PATH –Value $NewPath
-
 $path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
 [System.Environment]::SetEnvironmentVariable("Path", "C:\Python27\Scripts;$path", "Machine")
 
