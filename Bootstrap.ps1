@@ -1,4 +1,36 @@
-﻿# Set-ExecutionPolicy RemoteSigned
+﻿#======================================================================================================================
+# You may need to change the execution policy in order to run this script
+# Run the following in powershell:
+#
+# Set-ExecutionPolicy RemoteSigned
+#
+#======================================================================================================================
+#
+#          FILE: Bootstrap.ps1
+#
+#   DESCRIPTION: Bootstrap salt installation for 64bit windows distributions
+#
+#          BUGS: https://github.com/saltstack/salt-windows-bootstrap/issues
+#
+#     COPYRIGHT: (c) 2012-2015 by the SaltStack Team, see AUTHORS.rst for more
+#                details.
+#
+#       LICENSE: Apache 2.0
+#  ORGANIZATION: SaltStack (saltstack.org)
+#       CREATED: 02/09/2015
+#======================================================================================================================
+
+# Declare Variables
+$strDownloadDir = "$env:Temp\DevSalt"
+$strDevelopmentDir = "C:\Salt-Dev"
+$strSaltDir = "C:\Salt"
+$strWindowsRepo = "http://docs.saltstack.com/downloads/windows-deps"
+$strSaltBranch = "develop"
+
+# Create Directories
+New-Item $strDownloadDir -ItemType Directory -Force
+New-Item $strDevelopmentDir -ItemType Directory -Force
+New-Item $strSaltDir -ItemType Diretory -Force
 
 Clear-Host
 Function DownloadFileWithProgress {
@@ -63,10 +95,27 @@ function Update-Environment {
     }
 }
 
-$strDownloadDir = "$env:Temp\DevSalt"
-New-Item $strDownloadDir -Type Directory -Force
-
-$strWindowsRepo = "http://docs.saltstack.com/downloads/windows-deps"
+Clear-Host
+Write-Host "Git for Windows"
+Write-Host "- creating inf"
+Set-Content -path $strDownloadDir\git.inf -value "[Setup]"
+Add-Content -path $strDownloadDir\git.inf -value "Lang=default"
+Add-Content -path $strDownloadDir\git.inf -value "Dir=C:\Program Files (x86)\Git"
+Add-Content -path $strDownloadDir\git.inf -value "Group=Git"
+Add-Content -path $strDownloadDir\git.inf -value "NoIcons=0"
+Add-Content -path $strDownloadDir\git.inf -value "SetupType=default"
+Add-Content -path $strDownloadDir\git.inf -value "Components=ext,ext\cheetah,assoc,assoc_sh"
+Add-Content -path $strDownloadDir\git.inf -value "Tasks="
+Add-Content -path $strDownloadDir\git.inf -value "PathOption=Cmd"
+Add-Content -path $strDownloadDir\git.inf -value "SSHOption=OpenSSH"
+Add-Content -path $strDownloadDir\git.inf -value "CRLFOption=CRLFAlways"
+Write-Host "- downloading file"
+$file = "Git-1.9.5-preview20141217.exe"
+$url = "$strWindowsRepo\$file"
+$file = "$strDownloadDir\$file"
+DownloadFileWithProgress $url $file
+Write-Host "Installing..."
+$p = Start-Process $file -ArgumentList '/SILENT /LOADINF="$strDownloadDir\git.inf"' -Wait -NoNewWindow -PassThru
 
 Clear-Host
 Write-Host "Python 2.7 (entire package)"
@@ -79,7 +128,7 @@ $p = Start-Process msiexec -ArgumentList "/i $file /qb ADDLOCAL=ALL" -Wait -NoNe
 Write-Host "Refreshing the Environment Variables..."
 
 $path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
-[System.Environment]::SetEnvironmentVariable("Path", "C:\Python27;C:\Python27\Scripts;$path", "Machine")
+[System.Environment]::SetEnvironmentVariable("Path", "C:\Program Files (x86)\Git\cmd;C:\Python27;C:\Python27\Scripts;$path", "Machine")
 
 Update-Environment
 
@@ -175,6 +224,12 @@ DownloadFileWithProgress $url $file
 Write-Host "Copying to Python27 directory..."
 Copy-Item $file C:\Python27
 
+Write-Host "Cloning the SaltStack Git Repository"
+Set-Location -Path "$strDevelopmentDir"
+$p = Start-Process git -ArgumentList "clone https://github.com/saltstack/salt" -Wait -NoNewWindow -PassThru
+Set-Location -Path "$strDevelopmentDir\Salt"
+$p = Start-Process git -ArgumentList "checkout $strSaltBranch" -Wait -NoNewWindow -PassThru
+
 Write-Host "Setting up the environment"
 Set-Location -Path C:\Python27
 $p = Start-Process python -ArgumentList "ez_setup.py" -Wait -NoNewWindow -PassThru
@@ -198,5 +253,11 @@ $p = Start-Process pip -ArgumentList "install sphinx==1.3b2" -Wait -NoNewWindow 
 
 Write-Host "Cleaning up downloaded files"
 Remove-Item $strDownloadDir -Force -Recurse
+
+Write-Host "Copying Salt Config Files..."
+$strConfigFiles = "$strDevelopmentDir\salt\pkg\windows\buildenv"
+Copy-Item $strConfigFiles\* $strSaltDir
+Copy-Item $strConfigFiles\conf $strSaltDir -Recurse
+Copy-Item $strConfigFiles\var $strSaltDir -Recurse
 
 Write-Host "Salt Stack Dev Environment Script Complete"
