@@ -108,10 +108,6 @@ function Update-Environment {
     }
 }
 
-Write-Host "Press any key to continue ..."
-$HOST.UI.RawUI.Flushinputbuffer()
-$HOST.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-
 #========================================================
 # Download Prerequisite Files
 #========================================================
