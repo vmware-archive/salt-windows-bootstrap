@@ -401,7 +401,7 @@ Remove-Item $strDownloadDir -Force -Recurse
 #--------------------------------------------------------
 Write-Host "Copying Salt Config Files..."
 $strConfigFiles = "$strDevelopmentDir\salt\pkg\windows\buildenv"
-Copy-Item $strConfigFiles\* $strSaltDir
+Copy-Item $strConfigFiles\* $strSaltDir -Recurse -Force
 
 #--------------------------------------------------------
 # Script complete
