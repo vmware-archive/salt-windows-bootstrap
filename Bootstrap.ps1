@@ -24,7 +24,7 @@
 #--------------------------------------------------------
 $strDownloadDir    = "$env:Temp\DevSalt"
 $strDevelopmentDir = "C:\Salt-Dev"
-$strSaltDir        = "C:\Salt"
+$strSaltDir        = "C:\salt"
 $strWindowsRepo    = "http://docs.saltstack.com/downloads/windows-deps"
 $strSaltBranch     = "develop"
 
