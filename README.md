@@ -5,7 +5,11 @@ Powershell script to bootstrap python and all dependencies for the Salt Minion. 
 
 Source and target directories can be changed by editing variables towards the top. of the file.
 
+You'll still need to edit the minion configuration file in order to run
+
 ## Notes
 If the script fails to run, you may need to change the execution policy. Run the following in powershell:
 Set-ExecutionPolicy RemoteSigned
 
+## Warning
+This script will overwrite existing config files in C:\Salt.
