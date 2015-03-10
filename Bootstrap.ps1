@@ -319,7 +319,7 @@ $shell.NameSpace($path).CopyHere($item)
 Write-Host "Installing..."
 
 # Install the package
-cd $strDownloadDir\pefile-1.2.10-139
+Set-Location -Path $strDownloadDir\pefile-1.2.10-139
 $p = Start-Process python -ArgumentList "setup.py install" -Wait -NoNewWindow -PassThru
 
 Clear-Host
@@ -383,6 +383,12 @@ $p = Start-Process pip -ArgumentList "install certifi" -Wait -NoNewWindow -PassT
 $p = Start-Process pip -ArgumentList "install esky" -Wait -NoNewWindow -PassThru
 $p = Start-Process easy_install -ArgumentList "bbfreeze" -Wait -NoNewWindow -PassThru
 $p = Start-Process pip -ArgumentList "install sphinx==1.3b2" -Wait -NoNewWindow -PassThru
+
+#--------------------------------------------------------
+# Install Salt
+#--------------------------------------------------------
+Set-Location -Path "$strDevelopmentDir\salt"
+Start-Process python -ArgumentList "setup.py install --force" -Wait -NoNewWindow -PassThru
 
 #--------------------------------------------------------
 # Remove the temperary download directory
