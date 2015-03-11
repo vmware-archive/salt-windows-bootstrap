@@ -12,4 +12,4 @@ If the script fails to run, you may need to change the execution policy. Run the
 Set-ExecutionPolicy RemoteSigned
 
 ## Warning
-This script will overwrite existing config files in C:\Salt.
+This script will overwrite existing config files in C:\salt.
