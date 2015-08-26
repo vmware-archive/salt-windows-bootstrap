@@ -25,7 +25,7 @@
 $strDownloadDir    = "$env:Temp\DevSalt"
 $strDevelopmentDir = "C:\Salt-Dev"
 $strSaltDir        = "C:\salt"
-$strWindowsRepo    = "http://docs.saltstack.com/downloads/windows-deps"
+$strWindowsRepo    = "https://repo.saltstack.com/windows/dependencies/"
 $strSaltBranch     = "develop"
 
 # Create Directories
